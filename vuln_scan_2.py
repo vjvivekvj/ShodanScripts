@@ -5,7 +5,7 @@ import subprocess
 def scan_hosts(query):
 	# save IPs that have above keyword on hosts.txt file
 	with open("hosts.txt", "w") as f:
-		print("searching for label", query)
+		print("searching for ip address on shodan|", query)
 		args = 'shodan search --fields ip_str ' + query
 		p1 = subprocess.run(args,shell = True,  stdout=f, text=True, input=query)
 
@@ -31,13 +31,16 @@ def find_vuln():
 
 
 if __name__ == "__main__":
-	queries = []
 	parser = argparse.ArgumentParser()
-	parser.add_argument("label", help="keyword to query in shodan")
+	parser.add_argument("keyword", help="keyword to query in shodan")
+	parser.add_argument("-l", "--limit", help="limit the number of results")
 	args = parser.parse_args()
+	if args.limit:
+		query ='--limit ' + args.limit + " "
+	query = query + args.keyword
 
 	#create hosts.txt
-	scan_hosts(args.label)
+	scan_hosts(query)
 
 	#create vuln.txt
 	v = open("vuln.txt", "w")
